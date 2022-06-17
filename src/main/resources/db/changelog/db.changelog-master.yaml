@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Emma NWAMAIFE
+
+  - include:
+      file: DDL/001-create-tables.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: DML/001-insert-mock-patients-record.sql
+      relativeToChangelogFile: true
