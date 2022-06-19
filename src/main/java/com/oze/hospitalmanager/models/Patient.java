@@ -9,9 +9,11 @@ import javax.validation.constraints.Positive;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@SuperBuilder
 @Entity
 @Table(name = "patients")
 public class Patient extends Person {

@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset Emma NWAMAIFE:create-tables-001
 
-CREATE TABLE staffs (
+CREATE TABLE IF NOT EXISTS staffs (
     id BIGINT auto_increment, 
     name VARCHAR NOT NULL, 
     uuid UUID NOT NULL default random_uuid(), 
@@ -10,7 +10,7 @@ CREATE TABLE staffs (
     UNIQUE (uuid)
 );
 
-CREATE TABLE patients (
+CREATE TABLE IF NOT EXISTS patients (
     id BIGINT auto_increment, 
     name VARCHAR NOT NULL, 
     age TINYINT NOT NULL, 

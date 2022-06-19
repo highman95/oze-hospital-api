@@ -21,15 +21,14 @@ public class StaffService implements IStaffService {
 
     @Override
     public Response<Staff> addProfile(StaffDto staffDto) {
-        Staff newStaff = new Staff();
-        newStaff.setName(staffDto.getName());
+        Staff newStaff = Staff.builder().name(staffDto.getName()).build();
 
         Response<Staff> response = new Response<>();
         try {
             LOGGER.info("saving the staff profile...");
-            Staff staff = staffRepository.save(newStaff);
+            newStaff = staffRepository.save(newStaff);
 
-            response.setData(staff);
+            response.setData(newStaff);
             response.setStatus(true);
             response.setMessage(Constants.DATA_SUCCESSFULLY_SAVED);
         } catch (Exception e) {
