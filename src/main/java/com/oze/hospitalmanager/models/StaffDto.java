@@ -1,6 +1,6 @@
 package com.oze.hospitalmanager.models;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 import com.oze.hospitalmanager.utils.Constants;
 
@@ -14,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StaffDto {
-    @NotEmpty(message = Constants.NAME_IS_REQUIRED)
+    @NotBlank(message = Constants.NAME_IS_REQUIRED)
     private String name;
 }
