@@ -1,9 +1,16 @@
 package com.oze.hospitalmanager.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +36,29 @@ public class PatientService implements IPatientService {
     }
 
     @Override
-    public void downloadProfile(Long id) {
-        // TODO Auto-generated method stub
+    public ByteArrayInputStream downloadProfile(Long id) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL);
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                CSVPrinter printer = new CSVPrinter(new PrintWriter(out), format);) {
+            printer.printRecord("id", "name", "age", "last-visit-date");
+
+            List<Patient> patients = List.of(patientRepository.findById(id).orElseGet(Patient::new));
+
+            for (Patient patient : patients) {
+                if (patient.getId() == null)
+                    continue;
+
+                printer.printRecord(String.valueOf(patient.getId()), patient.getName(),
+                        String.valueOf(patient.getAge()), String.valueOf(patient.getLastVisitDate()));
+            }
+            printer.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            LOGGER.error("Fail to import data to CSV file: {}", e.getMessage());
+            e.printStackTrace();
+            return new ByteArrayInputStream("".getBytes());
+        }
     }
 
     @Override
