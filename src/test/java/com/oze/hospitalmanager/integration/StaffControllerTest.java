@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Disabled;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -113,7 +113,7 @@ public class StaffControllerTest {
     }
 
     @Test
-    @Disabled("the testcase is under development")
+    // @Disabled("the testcase is under development")
     @DisplayName("should return 204 when updating staff-profile with valid name and uuid (for authentication)")
     void whenValidAuthTokenIsPassed_ThenReturnStatus204() throws Exception {
         StaffDto staffDto = new StaffDto("James Wick");
@@ -122,10 +122,21 @@ public class StaffControllerTest {
         Staff staff = Staff.builder().uuid(UUID.randomUUID()).registrationDate(LocalDate.now()).build();
         doNothing().when(staffService).updateProfile(staff.getUuid(), staffDto);
 
-        mockMvc.perform(put("/api/v1/staffs")
-                .header(Constants.CUSTOM_AUTH_TOKEN_NAME, staff.getUuid())
+        mockMvc.perform(post("/api/v1/staffs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(body))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status", is(true)))
+                .andExpect(jsonPath("$.message", is(Constants.DATA_SUCCESSFULLY_SAVED)))
+                .andDo((result) -> {
+                    String uuid = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("data")
+                            .getString("uuid");
+
+                    mockMvc.perform(put("/api/v1/staffs")
+                            .header(Constants.CUSTOM_AUTH_TOKEN_NAME, uuid)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE).content(body))
+                            .andExpect(status().isNoContent());
+                });
+
     }
 
 }
