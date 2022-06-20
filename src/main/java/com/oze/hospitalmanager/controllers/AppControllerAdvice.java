@@ -24,8 +24,7 @@ public class AppControllerAdvice {
     public ResponseEntity<Object> handleException(HttpMessageNotReadableException ex) {
         LOGGER.error("HttpMessageNotReadable Exception -> {} --- {}",
                 ex.getClass().getSimpleName(), ex.getMessage());
-        return ResponseEntity.badRequest()
-                .body(new Response<>(ex.getMessage()));
+        return ResponseEntity.badRequest().body(new Response<>(ex.getMessage()));
     }
 
     @ExceptionHandler(value = { MissingServletRequestParameterException.class })
@@ -33,16 +32,22 @@ public class AppControllerAdvice {
     public ResponseEntity<Object> handleException(MissingServletRequestParameterException ex) {
         LOGGER.error("MissingServletRequestParameter Exception -> {} --- {}",
                 ex.getClass().getSimpleName(), ex.getMessage());
-        return ResponseEntity.badRequest()
-                .body(new Response<>(ex.getMessage()));
+        return ResponseEntity.badRequest().body(new Response<>(ex.getMessage()));
     }
 
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleException(MethodArgumentNotValidException ex) {
-        LOGGER.error("MethodArgumentNotValidException Exception -> {}", ex.getMessage());
+        LOGGER.error("MethodArgumentNotValid Exception -> {}", ex.getMessage());
         return ResponseEntity.badRequest()
                 .body(new Response<>(ex.getAllErrors().get(0).getDefaultMessage()));
+    }
+
+    @ExceptionHandler(value = { IllegalArgumentException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleException(IllegalArgumentException ex) {
+        LOGGER.error("IllegalArgument Exception -> {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(new Response<>(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
