@@ -1,5 +1,7 @@
 package com.oze.hospitalmanager.services;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,8 @@ public class StaffService implements IStaffService {
     }
 
     @Override
-    public void updateProfile(Long id, StaffDto staffDto) {
-        // TODO Auto-generated method stub
+    public void updateProfile(UUID uuid, StaffDto staffDto) {
+        staffRepository.updateProfile(uuid, staffDto.getName());
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,15 @@ public class AppControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleException(HttpMessageNotReadableException ex) {
         LOGGER.error("HttpMessageNotReadable Exception -> {} --- {}",
+                ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity.badRequest()
+                .body(new Response<>(ex.getMessage()));
+    }
+
+    @ExceptionHandler(value = { MissingServletRequestParameterException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleException(MissingServletRequestParameterException ex) {
+        LOGGER.error("MissingServletRequestParameter Exception -> {} --- {}",
                 ex.getClass().getSimpleName(), ex.getMessage());
         return ResponseEntity.badRequest()
                 .body(new Response<>(ex.getMessage()));

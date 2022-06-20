@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -23,6 +22,7 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 
 import com.oze.hospitalmanager.models.Staff;
 import com.oze.hospitalmanager.repositories.IStaffRepository;
+import com.oze.hospitalmanager.utils.Constants;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -31,13 +31,10 @@ public class SecurityConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfiguration.class);
 
-    @Value("${app.http.auth.token-name}")
-    private String authUUIDname;
-
     @Bean
     @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http, IStaffRepository staffRepository) throws Exception {
-        PreAuthTokenHeaderFilter filter = new PreAuthTokenHeaderFilter(authUUIDname);
+        PreAuthTokenHeaderFilter filter = new PreAuthTokenHeaderFilter(Constants.CUSTOM_AUTH_TOKEN_NAME);
         filter.setAuthenticationManager(new AuthenticationManager() {
             @Override
             public Authentication authenticate(Authentication authentication) throws AuthenticationException {
