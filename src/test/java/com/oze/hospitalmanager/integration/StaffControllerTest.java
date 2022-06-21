@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oze.hospitalmanager.models.Response;
 import com.oze.hospitalmanager.models.Staff;
@@ -128,8 +128,12 @@ public class StaffControllerTest {
                 .andExpect(jsonPath("$.status", is(true)))
                 .andExpect(jsonPath("$.message", is(Constants.DATA_SUCCESSFULLY_SAVED)))
                 .andDo((result) -> {
-                    String uuid = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("data")
-                            .getString("uuid");
+                    // String uuid = new JSONObject(result.getResponse().getContentAsString())
+                    // .getJSONObject("data").getString("uuid");
+                    // OR
+                    String uuid = objectMapper.readValue(result.getResponse().getContentAsString(),
+                            new TypeReference<Response<Staff>>() {
+                            }).getData().getUuid().toString();
 
                     mockMvc.perform(put("/api/v1/staffs")
                             .header(Constants.CUSTOM_AUTH_TOKEN_NAME, uuid)
