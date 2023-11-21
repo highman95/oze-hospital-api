@@ -24,6 +24,7 @@ import com.oze.hospitalmanager.models.StaffDto;
 import com.oze.hospitalmanager.repositories.IStaffRepository;
 import com.oze.hospitalmanager.services.StaffService;
 import com.oze.hospitalmanager.utils.Constants;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 public class StaffServiceTest {
@@ -47,8 +48,7 @@ public class StaffServiceTest {
     void givenStaffWithNoName_whenAddProfile_thenReturnNegativeFeedback() {
         StaffDto staffDto = new StaffDto();
 
-        Staff staff = Staff.builder().name(staffDto.getName()).build();
-        given(staffRepository.save(staff)).willReturn(Staff.builder().build());
+        given(staffRepository.save(any(Staff.class))).willThrow(DataIntegrityViolationException.class);
 
         Response<?> response = staffService.addProfile(staffDto);
         assertFalse(response.isStatus());

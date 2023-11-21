@@ -1,5 +1,8 @@
 package com.oze.hospitalmanager.controllers;
 
+import com.oze.hospitalmanager.exceptions.DatabaseErrorException;
+import com.oze.hospitalmanager.models.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,12 +15,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.oze.hospitalmanager.models.Response;
-
 @RestControllerAdvice(annotations = RestController.class, basePackages = "com.oze.hospitalmanager")
-public class AppControllerAdvice {
+public class AppControllerAdvice /* extends ResponseEntityExceptionHandler */ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppControllerAdvice.class);
+
+    @ExceptionHandler(DatabaseErrorException.class)
+    public ResponseEntity<Object> handleException(DatabaseErrorException ex) {
+        LOGGER.error("DatabaseErrorException Exception -> {} --- {}",
+                ex.getClass().getSimpleName(), ex.getMessage());
+        return ResponseEntity.internalServerError().body(new Response<>(ex.getMessage()));
+    }
 
     @ExceptionHandler(value = { HttpMessageNotReadableException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
